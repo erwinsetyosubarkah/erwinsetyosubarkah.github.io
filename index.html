@@ -54,7 +54,7 @@ https://templatemo.com/tm-531-reflux
             <div class="social-network">
               <ul class="soial-icons">
                 <li>
-                  <a href="https://fb.com/templatemo"
+                  <a href="#"
                     ><i class="fa fa-facebook"></i
                   ></a>
                 </li>
@@ -352,7 +352,13 @@ https://templatemo.com/tm-531-reflux
           <div class="row">
             <div class="right-content">
               <div class="container">
-                <form id="contact" action="" method="post">
+                <div class="My-Alert alert alert-primary alert-dismissible fade show d-none" role="alert">
+                  <strong>Terimakasih!</strong> Pesan anda sudah kami terima.
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form id="contact" action="" method="post" name="submit-to-google-sheet">
                   <div class="row">
                     <div class="col-md-6">
                       <fieldset>
@@ -370,7 +376,7 @@ https://templatemo.com/tm-531-reflux
                       <fieldset>
                         <input
                           name="email"
-                          type="text"
+                          type="email"
                           class="form-control"
                           id="email"
                           placeholder="Your email..."
@@ -404,8 +410,13 @@ https://templatemo.com/tm-531-reflux
                     </div>
                     <div class="col-md-12">
                       <fieldset>
-                        <button type="submit" id="form-submit" class="button">
+                        <button type="submit" id="form-submit" class="button btn-kirim">
                           Send Message
+                        </button>
+
+                        <button class="btn btn-primary btn-loading  d-none" type="button" disabled>
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          Loading...
                         </button>
                       </fieldset>
                     </div>
@@ -476,6 +487,35 @@ https://templatemo.com/tm-531-reflux
       $(window).scroll(function() {
         checkSection();
       });
+    </script>
+
+    <!-- Pengirim Form ke Google Sheets -->
+    <script>
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbxaorJEvM4VBsCtsUXgJEMG_7JroGpt74lgQYg_-33jnxZeT3AgymDW-wpWXCltN7q1/exec'
+      const form = document.forms['submit-to-google-sheet'];
+      const btnKirim = document.querySelector(".btn-kirim");
+      const btnLoading = document.querySelector(".btn-loading");
+      const myAlert = document.querySelector(".My-Alert");
+    
+      form.addEventListener('submit', e => {
+        e.preventDefault()
+        //ketika tombol submit diklik
+        //tampilkan tombol loading, hilangkan tombol kirim
+        btnLoading.classList.toggle('d-none');
+        btnKirim.classList.toggle('d-none');
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+          .then(response => {
+            //tampilkan tombol kirim, hilangkan tombol loading
+            btnLoading.classList.toggle('d-none');
+            btnKirim.classList.toggle('d-none');
+            //tampilkan alert
+            myAlert.classList.toggle('d-none');
+            //reset formnya
+            form.reset();
+            console.log('Success!', response)
+          })
+          .catch(error => console.error('Error!', error.message))
+      })
     </script>
   </body>
 </html>
